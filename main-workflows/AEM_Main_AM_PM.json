@@ -1,0 +1,112 @@
+{
+  "name": "AEM_Main_AM/PM",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 11,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c96600e7-2f90-42f6-9f25-528987b0315a",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "b2tEuPFGHD5j-Jqxcc2Gr",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/b2tEuPFGHD5j-Jqxcc2Gr",
+          "cachedResultName": "AEM_Sub_Newsletter"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        336,
+        0
+      ],
+      "id": "d1ce6ca8-0d19-40ad-a693-fdd0190f03a4",
+      "name": "AEM_Sub_Newsletter"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "mA5Eufi8M-C0gR_WZwu1R",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/mA5Eufi8M-C0gR_WZwu1R",
+          "cachedResultName": "AEM_Main_FYISummary"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        336,
+        -256
+      ],
+      "id": "f3329318-bb92-44d2-a713-88590a1ec28a",
+      "name": "Call AEM_Sub_FYISummary"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AEM_Sub_Newsletter",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Call AEM_Sub_FYISummary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "439f9762-5519-484c-9163-5dca379a6ce1",
+  "meta": {
+    "instanceId": "56a546582ceba2a43549bbc9bf7fc86020b83e1b5db93b111b47c1cf4ee5f7c0"
+  },
+  "id": "PcBn6dv-r0LxH-59Kj3hE",
+  "tags": []
+}

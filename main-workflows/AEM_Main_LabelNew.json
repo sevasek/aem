@@ -1,0 +1,1184 @@
+{
+  "name": "AEM_Main_LabelNew",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "id": "3d029803-56a8-43a6-9dfc-462251d3c83f",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "position": [
+        -4432,
+        -96
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dJW930QD1k03mOxC",
+          "name": "sevasek@gmail.com: Gmail & Calendar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.email_id }}",
+        "labelIds": "={{ $json.id }}"
+      },
+      "id": "b494eb68-c2a8-496f-a752-4bc47128f148",
+      "name": "Gmail1",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        208,
+        -528
+      ],
+      "webhookId": "[REDACTED_WEBHOOK_ID]",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dJW930QD1k03mOxC",
+          "name": "sevasek@gmail.com: Gmail & Calendar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Run the task.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an Automatic Email Manager.\nClassify this email into one of these functional user labels:\n{{ $json.userLabels.map(label => label.name).join(', ') }}\n\nFor context on labels:\n{{ $json.labels_guide }}\n\nEmail:\nTo: {{ $json.To }}\nFrom: {{ $json.From }}\nSubject: {{ $json.Subject }}\nSnippet: {{ $json.snippet }}\n"
+        }
+      },
+      "id": "2e0c8761-2281-426e-ae35-0b335091e48d",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        -1088,
+        -176
+      ],
+      "typeVersion": 1.9
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "labels",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -3328,
+        304
+      ],
+      "id": "f82801a7-ac1f-4613-9dd3-37fe122a5a19",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "resource": "label"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -3328,
+        -560
+      ],
+      "id": "e3190c4e-e189-4387-b03f-ab9cc5bfb9dd",
+      "name": "Get many labels",
+      "webhookId": "411fca85-e32a-4f96-a8ba-73d5037fd746",
+      "executeOnce": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dJW930QD1k03mOxC",
+          "name": "sevasek@gmail.com: Gmail & Calendar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "21347ac2-8c03-415f-a8de-b7614b2ae9ce",
+              "leftValue": "={{ $json.type }}",
+              "rightValue": "system",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "86f21819-8dab-4b2b-baf5-1bb1577d37a0",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "@",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -3072,
+        -560
+      ],
+      "id": "bc99d32c-0f00-49b4-b17f-dd2b1875e39c",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "name",
+              "field2": "label_name"
+            }
+          ]
+        },
+        "outputDataFrom": "input2",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2512,
+        336
+      ],
+      "id": "a21f7a60-a63e-4a43-8e45-60fb4fb4a8a8",
+      "name": "Merge1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d0e326ff-9f73-4c35-82db-6c5c3ee48828",
+              "name": "label_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "30e2ac38-6e01-4483-a359-a73ff731ff02",
+              "name": "label_name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3056,
+        304
+      ],
+      "id": "49c0949d-58ac-4168-9eee-108b7c7cd285",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2784,
+        336
+      ],
+      "id": "5ee08a0f-973c-4dee-8ba8-fdb524ee14f5",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1a895e5-59ce-43ac-8874-1609eb68c010",
+              "name": "email_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3328,
+        -96
+      ],
+      "id": "d267f01f-060c-403c-9623-10a33c72eb31",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ $json.email_id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -1696,
+        352
+      ],
+      "id": "ab4d1cd1-cd74-4286-bb72-da0f9d95b5e3",
+      "name": "Get a message",
+      "webhookId": "7683624c-1bca-4739-a5b6-0d0803a67ae2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dJW930QD1k03mOxC",
+          "name": "sevasek@gmail.com: Gmail & Calendar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-5-nano"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -1184,
+        16
+      ],
+      "id": "0a352359-7bde-4ebb-b22b-e90906c54d37",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "i20IdkCTdYsL0gaV",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1488,
+        -96
+      ],
+      "id": "cfe06c09-83a6-48ad-a864-f3fc67ca35a5",
+      "name": "Merge5"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "userLabels",
+        "include": "allFieldsExcept",
+        "fieldsToExclude": "type",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -2784,
+        -928
+      ],
+      "id": "ebf1d200-102d-47ce-a3a6-96be3c514b8d",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "name",
+              "field2": "output"
+            }
+          ]
+        },
+        "outputDataFrom": "input1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -608,
+        -464
+      ],
+      "id": "7b242c17-63ea-40fd-88b2-7bac91c758a2",
+      "name": "Merge6"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -336,
+        -528
+      ],
+      "id": "08d2bcd3-205d-4155-9e4e-3679ff511daa",
+      "name": "Merge7"
+    },
+    {
+      "parameters": {
+        "content": "## Split out the current lables",
+        "height": 400,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3408,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "74f7713a-eaea-4c7c-9780-70fa0a0a4ce1",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Rename label fields",
+        "height": 400,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3136,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "ea529367-36eb-42e2-b77e-62fad98b6384",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Merge email_id with label fields",
+        "height": 400,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2864,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "883bf686-46a3-44eb-9e8c-3921d0190718",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Isolate email id",
+        "height": 400,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3408,
+        -272
+      ],
+      "typeVersion": 1,
+      "id": "44dfd33d-9222-4b09-af4e-6b62407affeb",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Get current labels",
+        "height": 400,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3408,
+        -688
+      ],
+      "typeVersion": 1,
+      "id": "1362f6f1-9126-4e33-980a-f41a8422806e",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "## Exclude system and email address labels",
+        "height": 400,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3136,
+        -688
+      ],
+      "typeVersion": 1,
+      "id": "ca8a3d14-bfec-4a08-ac54-f67d2d129f29",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "## Merge (keep matches on label name, input2)\nSuccessful items have a user label already.",
+        "height": 400,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2592,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "a909eb7b-c52d-4078-945c-94764f23e3ff",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "## Merge (keep non-matches on email_id, input1)\nSuccessful items have no user label.",
+        "height": 400,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2320,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "5ef949cf-2e0a-4074-ac5a-bed9cbbce77a",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "email_id",
+        "joinMode": "keepNonMatches",
+        "outputDataFrom": "input1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2240,
+        352
+      ],
+      "id": "ee5dd33c-82cc-4b92-b50f-e6572d30db11",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "content": "## Split out to one label per item",
+        "height": 400,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2864,
+        -1104
+      ],
+      "typeVersion": 1,
+      "id": "03c3d37f-accb-4411-815f-43f0dadb8a2a",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "eb3744cd-4521-484e-99fa-17dc992907d1",
+              "leftValue": "={{ $json.email_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -1968,
+        352
+      ],
+      "id": "3ec93710-0bc8-466d-accf-0b628e2c17ca",
+      "name": "Filter2"
+    },
+    {
+      "parameters": {
+        "content": "## Allow only items with email_id",
+        "height": 400,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2048,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "de78068e-2a3b-4dcf-9460-ff22999ba160",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "content": "## Get the email",
+        "height": 400,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1776,
+        144
+      ],
+      "typeVersion": 1,
+      "id": "2b05131b-23e0-4187-9f58-773df6fd8b26",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "content": "## Combine with the user labels",
+        "height": 400,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1568,
+        -256
+      ],
+      "typeVersion": 1,
+      "id": "da256d68-e2ff-4467-8181-6952e96350a3",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "content": "## Send to the AI",
+        "height": 400,
+        "width": 528
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1232,
+        -272
+      ],
+      "typeVersion": 1,
+      "id": "c14223a3-cdae-494e-b5e1-b938bfc0a2bb",
+      "name": "Sticky Note15"
+    },
+    {
+      "parameters": {
+        "content": "## Merge AI output with user labels\nSuccessful items are legitimate user labels ",
+        "height": 400,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -688,
+        -688
+      ],
+      "typeVersion": 1,
+      "id": "9c08f446-9c5c-4c81-862a-647514355b77",
+      "name": "Sticky Note16"
+    },
+    {
+      "parameters": {
+        "content": "## Merge user label with email_id",
+        "height": 400,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -416,
+        -688
+      ],
+      "typeVersion": 1,
+      "id": "4971d9b8-5ca5-42aa-aae4-0ccce664a0fe",
+      "name": "Sticky Note17"
+    },
+    {
+      "parameters": {
+        "content": "## Add the user label to the email",
+        "height": 400,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        128,
+        -688
+      ],
+      "typeVersion": 1,
+      "id": "8c2a374f-5e19-4341-8d51-e018d8dc81d6",
+      "name": "Sticky Note18"
+    },
+    {
+      "parameters": {
+        "content": "## Filter out items without email_id and label_id",
+        "height": 400,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -144,
+        -688
+      ],
+      "typeVersion": 1,
+      "id": "1a81b6ae-233f-4613-9134-0488e4fe0c23",
+      "name": "Sticky Note19"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5708935f-5749-46f6-b35d-5811a427bb79",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "03e4f7ac-27a0-40a7-bf82-dc9d1d566cc6",
+              "leftValue": "={{ $json.email_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -64,
+        -528
+      ],
+      "id": "85fc2305-b488-4a13-a3d9-3df4924c3213",
+      "name": "Filter3"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.labels[0].id === \"SENT\" || $json.labels[1].id === \"SENT\" || $json.labels[2].id === \"SENT\" || $json.labels[3].id === \"SENT\"}}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "4e857896-9dbe-4a9e-9d58-40d990c9a0f3"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "SENT"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -4128,
+        -96
+      ],
+      "id": "962dcbe4-cd80-4a24-bde3-abd89294ec98",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $json.id }}",
+        "labelIds": [
+          "Label_6241151470652483933"
+        ]
+      },
+      "id": "c4cb6c1d-ccfe-4bf0-a016-f73d76205e5c",
+      "name": "Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        -3856,
+        -512
+      ],
+      "webhookId": "[REDACTED_WEBHOOK_ID]",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "dJW930QD1k03mOxC",
+          "name": "sevasek@gmail.com: Gmail & Calendar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Add the user label to the email",
+        "height": 400,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3936,
+        -672
+      ],
+      "typeVersion": 1,
+      "id": "8b3d6405-2123-4d5b-8fec-470703a89885",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "j8sAAFA9stRupgVN",
+          "mode": "list",
+          "cachedResultName": "email_labels_added",
+          "cachedResultUrl": "/projects/yXBLQIuOPa5wCGSS/datatables/j8sAAFA9stRupgVN"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "label": "={{ $json.name }}",
+            "email_id": "={{ $json.email_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "label",
+              "displayName": "label",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "email_id",
+              "displayName": "email_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "optimizeBulk": true
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        -176
+      ],
+      "id": "a3be05a6-136c-4d8d-a2be-2d99069baae4",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1280,
+        -368
+      ],
+      "id": "3c971277-b925-4d98-9eca-aa759c141637",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "SKJ24SgwG6Zvztia",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/SKJ24SgwG6Zvztia",
+          "cachedResultName": "AEM_Sub_EmailLabellingSystemGuide"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -1952,
+        -784
+      ],
+      "id": "9613c713-7852-4c09-ae7f-1f57301c40c2",
+      "name": "Call 'AEM_Sub_EmailLabellingSystemGuide'"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge6",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many labels": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge7",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a message": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge5": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge6": {
+      "main": [
+        [
+          {
+            "node": "Merge7",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge7": {
+      "main": [
+        [
+          {
+            "node": "Filter3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Filter2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter2": {
+      "main": [
+        [
+          {
+            "node": "Get a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter3": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get many labels",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Call 'AEM_Sub_EmailLabellingSystemGuide'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'AEM_Sub_EmailLabellingSystemGuide'": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timeSavedPerExecution": 1
+  },
+  "versionId": "778649f2-ad98-40a0-a568-5e5982f73412",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "56a546582ceba2a43549bbc9bf7fc86020b83e1b5db93b111b47c1cf4ee5f7c0"
+  },
+  "id": "wmVs_OIqz3zRkm4WdfQgp",
+  "tags": []
+}

@@ -1,0 +1,174 @@
+{
+  "name": "AEM_Main_Daily",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1696,
+        -576
+      ],
+      "id": "deeb833c-d2d9-496b-8014-b79c988eec15",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "zeHEpv52IhPHVh15",
+          "mode": "list"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -864,
+        -672
+      ],
+      "name": "Call AEM_Sub_AddTeamProjects",
+      "id": "a4a81069-60a1-47d7-a63b-59f90a507519"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "yDD8H6znVtKyfjAp",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/yDD8H6znVtKyfjAp",
+          "cachedResultName": "AEM_Sub_LabelOld"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -880,
+        -192
+      ],
+      "id": "f4355e40-497d-4d18-a2bf-5aa6e2f770d1",
+      "name": "Call AEM_Sub_LabelOld"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "6e8hMW3o7LhOFQ67",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/6e8hMW3o7LhOFQ67",
+          "cachedResultName": "AEM_Sub_ArchiveProcessed"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -880,
+        -960
+      ],
+      "id": "e5604c13-4888-4b0c-b7ff-3c1fba9e3917",
+      "name": "Call AEM_Sub_ArchiveProcessed"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Yybonrjndp2gFMN0",
+          "mode": "list",
+          "cachedResultName": "My Sub-Workflow 1",
+          "cachedResultUrl": "/workflow/Yybonrjndp2gFMN0"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -880,
+        80
+      ],
+      "id": "02f82e4c-2ad1-4923-be06-785aeaaa9bcb",
+      "name": "Call AEM_Sub_SMARTAlignedTasks"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Call AEM_Sub_AddTeamProjects",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Call AEM_Sub_LabelOld",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Call AEM_Sub_ArchiveProcessed",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Call AEM_Sub_SMARTAlignedTasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "a6d81c47-a4d0-4c57-9618-2ef563d2da6f",
+  "meta": {
+    "instanceId": "56a546582ceba2a43549bbc9bf7fc86020b83e1b5db93b111b47c1cf4ee5f7c0"
+  },
+  "id": "qnletX68kWGr0whbOTndr",
+  "tags": []
+}

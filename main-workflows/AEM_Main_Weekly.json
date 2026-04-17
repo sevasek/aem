@@ -1,0 +1,80 @@
+{
+  "name": "AEM_Main_Weekly",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -720,
+        -32
+      ],
+      "id": "eba134a1-342e-4998-b01f-f7dca22edbd3",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "pGREheUtVY4DSFUL",
+          "mode": "list"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -208,
+        -576
+      ],
+      "name": "Call AEM_Sub_WeeklyLabelReport",
+      "id": "c9bf53b1-d2bb-4916-b481-bcb49db06ac1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Call AEM_Sub_WeeklyLabelReport",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "6fa9be32-4f98-4296-a78d-411f7f069063",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "56a546582ceba2a43549bbc9bf7fc86020b83e1b5db93b111b47c1cf4ee5f7c0"
+  },
+  "id": "21p14F0vI3CepFc3m1S9i",
+  "tags": []
+}
